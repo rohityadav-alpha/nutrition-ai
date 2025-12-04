@@ -1,26 +1,24 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+"use client";
+
 import "./globals.css";
-import Navbar from "./components/Navbar";
+import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
+import Navbar from "@/app/components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+export default function RootLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
 
-export const metadata: Metadata = {
-  title: "NutriAI - AI Nutrition Scanner",
-  description: "Scan your meals and track nutrition with AI",
-};
+  // Jahan Navbar hide karna hai
+  const hideNavbarOn = ["/", "/sign-in", "/sign-up"];
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+  const shouldHideNavbar = hideNavbarOn.includes(pathname);
+
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
-          <Navbar />
+        <body className="min-h-screen bg-gray-50">
+          {!shouldHideNavbar && <Navbar />}
           {children}
         </body>
       </html>

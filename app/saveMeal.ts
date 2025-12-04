@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { auth , currentUser } from "@clerk/nextjs/server";
 
 interface FoodItem {
   name: string;
@@ -26,16 +26,19 @@ interface MealData {
 
 export async function saveMealToDatabase(mealData: MealData) {
   try {
-    // Get authenticated user ID
     const { userId } = await auth();
-    
     if (!userId) {
       return { error: "Please sign in to save meals" };
     }
 
+    const user = await currentUser(); // ✅ Clerk se full user
+    const primaryEmail =
+      user?.emailAddresses[0]?.emailAddress ?? null;
+
     const meal = await prisma.meal.create({
       data: {
-        userId: userId, // ✅ Real user ID from Clerk
+        userId: userId,
+        userEmail: primaryEmail, // ✅ Email store
         imageUrl: mealData.image_url || null,
         mealType: mealData.meal_type,
         totalCalories: mealData.total_calories,
@@ -43,7 +46,7 @@ export async function saveMealToDatabase(mealData: MealData) {
         totalCarbs: mealData.total_carbs,
         totalFats: mealData.total_fats,
         healthTip: mealData.health_tip,
-        
+
         foods: {
           create: mealData.foods.map((food) => ({
             name: food.name,
@@ -61,11 +64,10 @@ export async function saveMealToDatabase(mealData: MealData) {
       },
     });
 
-    console.log("✅ Meal saved:", meal.id);
     return { success: true, meal_id: meal.id };
-
   } catch (error: any) {
-    console.error("❌ Save error:", error);
+    console.error("Save error:", error);
     return { error: "Failed to save: " + error.message };
   }
 }
+

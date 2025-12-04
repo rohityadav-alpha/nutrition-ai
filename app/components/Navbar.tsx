@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Pizza, History, TrendingUp, User, Menu, X } from "lucide-react";
+import { Pizza, History, TrendingUp, User, Menu, X, Calculator } from "lucide-react";
 import { useState } from "react";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 
@@ -11,9 +11,11 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/", label: "Scanner", icon: Pizza },
+    { href: "/dashboard", label: "Scanner", icon: Pizza },
     { href: "/history", label: "History", icon: History },
     { href: "/analytics", label: "Analytics", icon: TrendingUp },
+    { href: "/calculator", label: "Calculator", icon: Calculator },
+    { href: "/profile", label: "Profile", icon: User },
   ];
 
   const isActive = (path: string) => pathname === path;
@@ -25,7 +27,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3 group">
+            <Link href="/dashboard" className="flex items-center space-x-3 group">
               <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-2 rounded-xl group-hover:scale-110 transition-transform">
                 <Pizza className="w-6 h-6 text-white" />
               </div>
@@ -131,7 +133,7 @@ export default function Navbar() {
                 <SignedIn>
                   <div className="flex items-center space-x-3 px-4 py-3">
                     <UserButton afterSignOutUrl="/" />
-                    <span className="text-gray-700 font-medium">Profile</span>
+                    <span className="text-gray-700 font-medium">Account</span>
                   </div>
                 </SignedIn>
               </div>
