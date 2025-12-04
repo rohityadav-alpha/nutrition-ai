@@ -1,7 +1,18 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
-export async function getUserMeals(limit: number = 10) {
+export type FilterOptions = {
+  mealType?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export async function getUserMeals(
+  limit: number = 50,
+  options?: FilterOptions
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -14,17 +25,28 @@ export async function getUserMeals(limit: number = 10) {
       return { error: "No email found for user", meals: [] };
     }
 
+    const where: any = { userEmail: email };
+
+    if (options?.mealType && options.mealType !== "all") {
+      where.mealType = options.mealType;
+    }
+
+    if (options?.startDate || options?.endDate) {
+      where.createdAt = {};
+      if (options.startDate) {
+        where.createdAt.gte = new Date(options.startDate);
+      }
+      if (options.endDate) {
+        const end = new Date(options.endDate);
+        end.setHours(23, 59, 59, 999);
+        where.createdAt.lte = end;
+      }
+    }
+
     const meals = await prisma.meal.findMany({
-      where: {
-        // ✅ Email-based filter
-        userEmail: email,
-      },
-      include: {
-        foods: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where,
+      include: { foods: true },
+      orderBy: { createdAt: "desc" },
       take: limit,
     });
 
@@ -34,6 +56,7 @@ export async function getUserMeals(limit: number = 10) {
     return { error: "Failed to load meals", meals: [] };
   }
 }
+
 
 export async function getWeeklyStats() {
   try {
