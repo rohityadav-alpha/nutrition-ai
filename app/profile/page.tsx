@@ -150,8 +150,7 @@ export default function ProfileClient() {
             <img
               src={user.imageUrl}
               alt="Avatar"
-              className="w-16 h-16 rounded-full ring-2"
-              style={{ ringColor: "rgba(16,185,129,0.4)" }}
+              className="w-16 h-16 rounded-full ring-2 ring-emerald-500/40"
             />
           ) : (
             <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)" }}>
