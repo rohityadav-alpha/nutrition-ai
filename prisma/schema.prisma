@@ -11,7 +11,7 @@ datasource db {
 model Meal {
   id            String   @id @default(cuid())
   userId        String
-  userEmail     String?  // ✅ NEW: store email for lookups
+  userEmail     String?
   imageUrl      String?
   mealType      String
   totalCalories Int
@@ -20,17 +20,14 @@ model Meal {
   totalFats     Int
   healthTip     String?
   createdAt     DateTime @default(now())
-  
   foods         Food[]
 
   @@map("meals")
 }
 
 model Food {
-  id          String @id @default(cuid())
+  id          String   @id @default(cuid())
   mealId      String
-  meal        Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  
   name        String
   portionSize String
   calories    Int
@@ -38,36 +35,29 @@ model Food {
   carbs       Int
   fats        Int
   confidence  String
-  
   createdAt   DateTime @default(now())
+  meal        Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
 
   @@map("foods")
 }
 
 model UserProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  userEmail       String   @unique
-  
-  // Basic Info
-  name            String?
-  weight          Float?   // in kg
-  height          Float?   // in cm
-  age             Int?
-  gender          String?  // male/female
-  
-  // Goals
-  goal            String?  // lose/maintain/gain
-  activityLevel   String?  // sedentary/light/moderate/active/veryActive
-  
-  // Calculated Targets
-  targetCalories  Int?
-  targetProtein   Int?
-  targetCarbs     Int?
-  targetFats      Int?
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  userEmail      String   @unique
+  name           String?
+  weight         Float?
+  height         Float?
+  age            Int?
+  gender         String?
+  goal           String?
+  activityLevel  String?
+  targetCalories Int?
+  targetProtein  Int?
+  targetCarbs    Int?
+  targetFats     Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@map("user_profiles")
 }
