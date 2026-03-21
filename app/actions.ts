@@ -35,7 +35,7 @@ export async function analyzeFoodImage(formData: FormData) {
 
     // 4. Model initialize
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash",
+      model: "gemini-2.5-flash-lite",
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
